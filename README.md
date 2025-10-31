@@ -188,6 +188,22 @@ pnpm start
 
 Frontend will be available at: http://localhost:4200
 
+### 📖 API Documentation (Swagger)
+
+The backend API includes interactive Swagger documentation for easy testing and exploration:
+
+**Development Mode:**
+- **Swagger UI**: http://localhost:5000/swagger
+- **OpenAPI Spec**: http://localhost:5000/swagger/v1/swagger.json
+
+**Features:**
+- Interactive API endpoint testing
+- Request/response schema documentation
+- Try out endpoints directly in the browser
+- Automatic OpenAPI specification generation
+
+**Note**: Swagger is only enabled in Development environment for security. To enable in other environments, modify `Program.cs` in the backend.
+
 ## 🔧 Environment Configuration
 
 ### Development
@@ -436,15 +452,14 @@ docker-compose -f docker/docker-compose.prod.yml up -d
 docker-compose -f docker/docker-compose.prod.yml ps
 ```
 
-### CI/CD Pipeline
+### CI Pipeline
 
-The project includes a GitHub Actions workflow that:
+The project includes a GitHub Actions workflow (`.github/workflows/ci-cd.yml`) that automatically:
 
-1. ✅ Builds and tests backend (.NET)
-2. ✅ Builds and tests frontend (Angular)
-3. ✅ Creates Docker images
-4. ✅ Deploys to staging (develop branch)
-5. ✅ Deploys to production (main branch)
+1. ✅ Builds and tests backend (.NET 9)
+2. ✅ Builds and tests frontend (Angular 18+)
+
+The workflow runs on every push and pull request to `main` and `develop` branches.
 
 ## 🐛 Troubleshooting
 
