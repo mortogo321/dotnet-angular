@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskboard-postgres-staging
+    environment:
+      POSTGRES_DB: taskboard_staging
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - taskboard-staging
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: taskboard-backend-staging
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=taskboard_staging;Username=${DB_USER:-postgres};Password=${DB_PASSWORD}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - taskboard-staging
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../
+      dockerfile: frontend/Dockerfile
+    container_name: taskboard-frontend-staging
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - taskboard-staging
+    restart: unless-stopped
+
+networks:
+  taskboard-staging:
+    driver: bridge
+
+volumes:
+  postgres_staging_data:

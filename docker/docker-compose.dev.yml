@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskboard-postgres-dev
+    environment:
+      POSTGRES_DB: taskboard_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - taskboard-dev
+
+networks:
+  taskboard-dev:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:

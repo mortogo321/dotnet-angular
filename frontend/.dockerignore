@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+bower_components/
+jspm_packages/
+
+# Build outputs
+dist/
+tmp/
+.angular/
+coverage/
+
+# IDE folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files
+*.spec.ts
+e2e/
+karma.conf.js
+protractor.conf.js
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!src/environments/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+LICENSE
+README.md
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Misc
+.editorconfig
+.browserslistrc
+.npmrc
+.nvmrc
