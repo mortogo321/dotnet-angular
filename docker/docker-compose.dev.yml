@@ -1,8 +1,8 @@
-version: '3.8'
+
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: taskboard-postgres-dev
     environment:
       POSTGRES_DB: taskboard_dev
