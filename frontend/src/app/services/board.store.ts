@@ -125,11 +125,12 @@ export class BoardStore {
 
         // Add card to target list
         if (movedCard) {
+          const cardToInsert = movedCard;
           return {
             ...b,
             lists: listsWithoutCard.map(l =>
               l.id === data.targetListId
-                ? { ...l, cards: [...l.cards, movedCard].sort((a, b) => a.position - b.position) }
+                ? { ...l, cards: [...l.cards, cardToInsert].sort((a, b) => a.position - b.position) }
                 : l
             )
           };
