@@ -1,11 +1,19 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Board, CreateBoardDto, CreateListDto, CreateCardDto, MoveCardDto, BoardList, Card } from '../models/board.model';
+import type {
+  Board,
+  CreateBoardDto,
+  CreateListDto,
+  CreateCardDto,
+  MoveCardDto,
+  BoardList,
+  Card,
+} from '../models/board.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
   private http = inject(HttpClient);
@@ -46,7 +54,10 @@ export class ApiService {
   }
 
   moveList(id: string, newPosition: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/api/lists/${id}/move?newPosition=${newPosition}`, {});
+    return this.http.patch<void>(
+      `${this.apiUrl}/api/lists/${id}/move?newPosition=${newPosition}`,
+      {},
+    );
   }
 
   // Card endpoints

@@ -1,5 +1,13 @@
 # TaskBoard
 
+[![CI](https://github.com/mortogo321/dotnet-angular/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/mortogo321/dotnet-angular/actions/workflows/ci-cd.yml)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/)
+[![Angular 22](https://img.shields.io/badge/Angular-22.2-red)](https://angular.dev/)
+[![Node 26](https://img.shields.io/badge/Node-26-green)](https://nodejs.org/)
+[![Bun 1.4](https://img.shields.io/badge/Bun-1.4-black)](https://bun.sh/)
+[![Docker](https://img.shields.io/badge/Docker-ready-blue)](docker/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A Trello-style task management application demonstrating a full-stack .NET + Angular setup with real-time collaboration, clean architecture on the backend, and a signals-based reactive frontend.
 
 ## What it demonstrates

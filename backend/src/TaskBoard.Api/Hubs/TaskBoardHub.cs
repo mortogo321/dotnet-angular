@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace TaskBoard.Api.Hubs;
 
-public class TaskBoardHub : Hub
+public class TaskBoardHub(ILogger<TaskBoardHub> logger) : Hub
 {
     public async Task JoinBoard(string boardId)
     {
@@ -74,12 +74,12 @@ public class TaskBoardHub : Hub
     public override async Task OnConnectedAsync()
     {
         await base.OnConnectedAsync();
-        Console.WriteLine($"Client connected: {Context.ConnectionId}");
+        logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await base.OnDisconnectedAsync(exception);
-        Console.WriteLine($"Client disconnected: {Context.ConnectionId}");
+        logger.LogInformation("Client disconnected: {ConnectionId}", Context.ConnectionId);
     }
 }

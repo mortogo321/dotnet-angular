@@ -1,10 +1,10 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { Board, BoardList, Card } from '../models/board.model';
+import type { Board, BoardList, Card } from '../models/board.model';
 import { ApiService } from './api.service';
 import { SignalRService } from './signalr.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BoardStore {
   private apiService = inject(ApiService);
@@ -27,20 +27,18 @@ export class BoardStore {
 
   private setupSignalRListeners(): void {
     this.signalRService.onBoardCreated((board) => {
-      this.boards.update(boards => [...boards, board]);
+      this.boards.update((boards) => [...boards, board]);
     });
 
     this.signalRService.onBoardUpdated((board) => {
-      this.boards.update(boards =>
-        boards.map(b => b.id === board.id ? board : b)
-      );
+      this.boards.update((boards) => boards.map((b) => (b.id === board.id ? board : b)));
       if (this.currentBoard()?.id === board.id) {
         this.currentBoard.set(board);
       }
     });
 
     this.signalRService.onBoardDeleted((boardId) => {
-      this.boards.update(boards => boards.filter(b => b.id !== boardId));
+      this.boards.update((boards) => boards.filter((b) => b.id !== boardId));
       if (this.currentBoard()?.id === boardId) {
         this.currentBoard.set(null);
       }
@@ -49,78 +47,109 @@ export class BoardStore {
     this.signalRService.onListCreated((list) => {
       const board = this.currentBoard();
       if (board && board.id === list.boardId) {
-        this.currentBoard.update(b => b ? {
-          ...b,
-          lists: [...b.lists, list].sort((a, b) => a.position - b.position)
-        } : null);
+        this.currentBoard.update((b) =>
+          b
+            ? {
+                ...b,
+                lists: [...b.lists, list].sort((a, b) => a.position - b.position),
+              }
+            : null,
+        );
       }
     });
 
     this.signalRService.onListUpdated((list) => {
       const board = this.currentBoard();
       if (board && board.id === list.boardId) {
-        this.currentBoard.update(b => b ? {
-          ...b,
-          lists: b.lists.map(l => l.id === list.id ? list : l).sort((a, b) => a.position - b.position)
-        } : null);
+        this.currentBoard.update((b) =>
+          b
+            ? {
+                ...b,
+                lists: b.lists
+                  .map((l) => (l.id === list.id ? list : l))
+                  .sort((a, b) => a.position - b.position),
+              }
+            : null,
+        );
       }
     });
 
     this.signalRService.onListDeleted((listId) => {
-      this.currentBoard.update(b => b ? {
-        ...b,
-        lists: b.lists.filter(l => l.id !== listId)
-      } : null);
+      this.currentBoard.update((b) =>
+        b
+          ? {
+              ...b,
+              lists: b.lists.filter((l) => l.id !== listId),
+            }
+          : null,
+      );
     });
 
     this.signalRService.onCardCreated((card) => {
-      this.currentBoard.update(b => b ? {
-        ...b,
-        lists: b.lists.map(l =>
-          l.id === card.listId
-            ? { ...l, cards: [...l.cards, card].sort((a, b) => a.position - b.position) }
-            : l
-        )
-      } : null);
+      this.currentBoard.update((b) =>
+        b
+          ? {
+              ...b,
+              lists: b.lists.map((l) =>
+                l.id === card.listId
+                  ? { ...l, cards: [...l.cards, card].sort((a, b) => a.position - b.position) }
+                  : l,
+              ),
+            }
+          : null,
+      );
     });
 
     this.signalRService.onCardUpdated((card) => {
-      this.currentBoard.update(b => b ? {
-        ...b,
-        lists: b.lists.map(l =>
-          l.id === card.listId
-            ? { ...l, cards: l.cards.map(c => c.id === card.id ? card : c).sort((a, b) => a.position - b.position) }
-            : l
-        )
-      } : null);
+      this.currentBoard.update((b) =>
+        b
+          ? {
+              ...b,
+              lists: b.lists.map((l) =>
+                l.id === card.listId
+                  ? {
+                      ...l,
+                      cards: l.cards
+                        .map((c) => (c.id === card.id ? card : c))
+                        .sort((a, b) => a.position - b.position),
+                    }
+                  : l,
+              ),
+            }
+          : null,
+      );
     });
 
     this.signalRService.onCardDeleted((cardId) => {
-      this.currentBoard.update(b => b ? {
-        ...b,
-        lists: b.lists.map(l => ({
-          ...l,
-          cards: l.cards.filter(c => c.id !== cardId)
-        }))
-      } : null);
+      this.currentBoard.update((b) =>
+        b
+          ? {
+              ...b,
+              lists: b.lists.map((l) => ({
+                ...l,
+                cards: l.cards.filter((c) => c.id !== cardId),
+              })),
+            }
+          : null,
+      );
     });
 
     this.signalRService.onCardMoved((data) => {
-      this.currentBoard.update(b => {
+      this.currentBoard.update((b) => {
         if (!b) return null;
 
         let movedCard: Card | null = null;
 
         // Remove card from current list
-        const listsWithoutCard = b.lists.map(l => ({
+        const listsWithoutCard = b.lists.map((l) => ({
           ...l,
-          cards: l.cards.filter(c => {
+          cards: l.cards.filter((c) => {
             if (c.id === data.cardId) {
               movedCard = { ...c, listId: data.targetListId, position: data.newPosition };
               return false;
             }
             return true;
-          })
+          }),
         }));
 
         // Add card to target list
@@ -128,11 +157,14 @@ export class BoardStore {
           const cardToInsert = movedCard;
           return {
             ...b,
-            lists: listsWithoutCard.map(l =>
+            lists: listsWithoutCard.map((l) =>
               l.id === data.targetListId
-                ? { ...l, cards: [...l.cards, cardToInsert].sort((a, b) => a.position - b.position) }
-                : l
-            )
+                ? {
+                    ...l,
+                    cards: [...l.cards, cardToInsert].sort((a, b) => a.position - b.position),
+                  }
+                : l,
+            ),
           };
         }
 
@@ -192,7 +224,7 @@ export class BoardStore {
     const board = this.currentBoard();
     if (!board) return;
 
-    const list = board.lists.find(l => l.id === listId);
+    const list = board.lists.find((l) => l.id === listId);
     if (!list) return;
 
     try {

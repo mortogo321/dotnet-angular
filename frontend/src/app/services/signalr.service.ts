@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { Board, BoardList, Card } from '../models/board.model';
+import type { Board, BoardList, Card } from '../models/board.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SignalRService {
   private hubConnection?: signalR.HubConnection;
@@ -23,7 +23,11 @@ export class SignalRService {
   private cardCreatedCallbacks: ((card: Card) => void)[] = [];
   private cardUpdatedCallbacks: ((card: Card) => void)[] = [];
   private cardDeletedCallbacks: ((cardId: string) => void)[] = [];
-  private cardMovedCallbacks: ((data: { cardId: string; targetListId: string; newPosition: number }) => void)[] = [];
+  private cardMovedCallbacks: ((data: {
+    cardId: string;
+    targetListId: string;
+    newPosition: number;
+  }) => void)[] = [];
 
   async startConnection(): Promise<void> {
     this.connectionState.set('connecting');
@@ -51,48 +55,51 @@ export class SignalRService {
     if (!this.hubConnection) return;
 
     this.hubConnection.on('BoardCreated', (board: Board) => {
-      this.boardCreatedCallbacks.forEach(cb => cb(board));
+      this.boardCreatedCallbacks.forEach((cb) => cb(board));
     });
 
     this.hubConnection.on('BoardUpdated', (board: Board) => {
-      this.boardUpdatedCallbacks.forEach(cb => cb(board));
+      this.boardUpdatedCallbacks.forEach((cb) => cb(board));
     });
 
     this.hubConnection.on('BoardDeleted', (boardId: string) => {
-      this.boardDeletedCallbacks.forEach(cb => cb(boardId));
+      this.boardDeletedCallbacks.forEach((cb) => cb(boardId));
     });
 
     this.hubConnection.on('ListCreated', (list: BoardList) => {
-      this.listCreatedCallbacks.forEach(cb => cb(list));
+      this.listCreatedCallbacks.forEach((cb) => cb(list));
     });
 
     this.hubConnection.on('ListUpdated', (list: BoardList) => {
-      this.listUpdatedCallbacks.forEach(cb => cb(list));
+      this.listUpdatedCallbacks.forEach((cb) => cb(list));
     });
 
     this.hubConnection.on('ListDeleted', (listId: string) => {
-      this.listDeletedCallbacks.forEach(cb => cb(listId));
+      this.listDeletedCallbacks.forEach((cb) => cb(listId));
     });
 
     this.hubConnection.on('ListMoved', (data: { listId: string; newPosition: number }) => {
-      this.listMovedCallbacks.forEach(cb => cb(data));
+      this.listMovedCallbacks.forEach((cb) => cb(data));
     });
 
     this.hubConnection.on('CardCreated', (card: Card) => {
-      this.cardCreatedCallbacks.forEach(cb => cb(card));
+      this.cardCreatedCallbacks.forEach((cb) => cb(card));
     });
 
     this.hubConnection.on('CardUpdated', (card: Card) => {
-      this.cardUpdatedCallbacks.forEach(cb => cb(card));
+      this.cardUpdatedCallbacks.forEach((cb) => cb(card));
     });
 
     this.hubConnection.on('CardDeleted', (cardId: string) => {
-      this.cardDeletedCallbacks.forEach(cb => cb(cardId));
+      this.cardDeletedCallbacks.forEach((cb) => cb(cardId));
     });
 
-    this.hubConnection.on('CardMoved', (data: { cardId: string; targetListId: string; newPosition: number }) => {
-      this.cardMovedCallbacks.forEach(cb => cb(data));
-    });
+    this.hubConnection.on(
+      'CardMoved',
+      (data: { cardId: string; targetListId: string; newPosition: number }) => {
+        this.cardMovedCallbacks.forEach((cb) => cb(data));
+      },
+    );
   }
 
   async joinBoard(boardId: string): Promise<void> {
@@ -148,7 +155,9 @@ export class SignalRService {
     this.cardDeletedCallbacks.push(callback);
   }
 
-  onCardMoved(callback: (data: { cardId: string; targetListId: string; newPosition: number }) => void): void {
+  onCardMoved(
+    callback: (data: { cardId: string; targetListId: string; newPosition: number }) => void,
+  ): void {
     this.cardMovedCallbacks.push(callback);
   }
 

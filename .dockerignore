@@ -1,0 +1,19 @@
+# Root .dockerignore (frontend build uses repo-root context)
+**/node_modules/
+**/dist/
+**/out-tsc/
+**/.angular/
+**/coverage/
+.git/
+.gitignore
+**/.git/
+**/.vscode/
+**/.idea/
+.DS_Store
+**/*.log
+backend/bin/
+backend/obj/
+backend/out/
+backend/publish/
+**/bin/
+**/obj/

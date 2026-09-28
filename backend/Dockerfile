@@ -1,5 +1,5 @@
-# Multi-stage build for .NET 9 API
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Multi-stage build for .NET 10 API
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble AS build
 WORKDIR /src
 
 # Copy csproj files and restore dependencies
@@ -22,15 +22,22 @@ FROM build AS publish
 RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble AS final
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+RUN useradd -m appuser
+
+COPY --from=publish --chown=appuser:appuser /app/publish .
 USER appuser
 
-COPY --from=publish /app/publish .
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
 
 ENTRYPOINT ["dotnet", "TaskBoard.Api.dll"]
