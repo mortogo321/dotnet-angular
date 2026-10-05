@@ -15,7 +15,7 @@ COPY frontend/ ./
 RUN pnpm run build
 
 # Nginx runtime
-FROM nginx:1.29-alpine AS final
+FROM nginx:1.31-alpine AS final
 
 # Copy built app
 COPY --from=build /app/dist/taskboard-app/browser /usr/share/nginx/html
