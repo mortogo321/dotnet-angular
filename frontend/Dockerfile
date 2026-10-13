@@ -1,6 +1,6 @@
 # Multi-stage build for Angular app
 # Context: repository root (see docker/docker-compose*.yml)
-FROM node:26.10-alpine AS build
+FROM node:26.11-alpine AS build
 WORKDIR /app
 
 # Install pnpm
